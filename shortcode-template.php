@@ -1,4 +1,4 @@
-<div>
+<div style="margin-top: 50px;">
 	<button class="btn btn-default qic-btn">Download CSV</button>
 </div>
 
@@ -8,12 +8,17 @@
 	const qicBtn = document.querySelector('.qic-btn');
 	
 	qicBtn.addEventListener('click', function(e){
+		e.preventDefault();
 		
+		this.disabled = true;
+
 		$.ajax({
         	type:'get',
         	url: qicUrl,
         	success: function(response){ 
-        		console.log(response);
+        		if (response.url != undefined ) {
+		          window.open(response.url);
+		        }
         	}
 		});
 	});
