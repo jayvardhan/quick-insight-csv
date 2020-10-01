@@ -1,5 +1,9 @@
 <div style="margin-top: 50px;">
-	<button class="btn btn-default qic-btn">Download CSV</button>
+	<div class="text-muted" style="margin-bottom:50px;">
+		<h3>Data will be generated for following query</h3>
+		<?php echo $this->query(); ?>		
+	</div>
+	<button class="btn btn-primary qic-btn">Download CSV</button>
 </div>
 
 <script type="text/javascript">

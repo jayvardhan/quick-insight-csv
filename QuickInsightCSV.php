@@ -33,20 +33,15 @@ class QuickInsightCSV {
 		
 		$output = fopen($outputPath, "w");
 		
-		$heading = array(
-     		'name' => 'Author Name',
-     		'email' => 'Author Email'
-     	);
-
- 		fputcsv($output, $heading);
-
-		foreach ($data as $dto) {
-			$row = array(
-				'name' => $dto->display_name,
-				'email' => $dto->user_email
-			);
-			fputcsv($output, $row);	
+		if( is_array($data) && empty($data) ) {
+			fputcsv($output, array('Data not available for requested query!'));
+		} else {
+	 		foreach ($data as $dto) {
+				$row = (array) $dto;
+				fputcsv($output, $row);	
+			}
 		}
+
 		
 		fclose($output);
 		
@@ -60,11 +55,24 @@ class QuickInsightCSV {
 	}
 
 
+	/**
+	 * Update query variable with custom sql query whose data to be downloaded as csv.
+	 *
+	 * @return query string 
+	 **/
+	public function query() {
+		global $wpdb;
+
+		$query = "SELECT display_name, user_email FROM $wpdb->users u WHERE u.ID IN (SELECT DISTINCT post_author FROM $wpdb->posts p JOIN $wpdb->term_relationships tr ON tr.object_id = p.ID WHERE p.post_status = 'publish' AND p.post_type = 'post' AND p.post_date > '2020-03-01' AND tr.term_taxonomy_id = 7 )";
+
+		return $query;
+	}
+
+
 	public function getData() {
 		global $wpdb;
 
-		$query = "SELECT display_name, user_email FROM $wpdb->users u WHERE u.ID IN(SELECT DISTINCT post_author FROM $wpdb->posts p JOIN $wpdb->term_relationships tr ON tr.object_id = p.ID WHERE p.post_status = 'publish' AND p.post_type = 'post' AND p.post_date > '2020-03-01' AND tr.term_taxonomy_id = 7 )";
-
+		$query = $this->query();
 		
 		$rst = $wpdb->get_results( $query );
 
